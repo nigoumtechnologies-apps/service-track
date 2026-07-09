@@ -14,26 +14,31 @@ const JobCard = {
         }[job.serviceType] || "";
 
         const currentStatus = this.getCurrentStatus(job);
+        const estimatedDelivery = this.formatEstimatedDelivery(job.estimatedDelivery);
 
         return `
-            <div class="jobCard ${typeClass}" onclick="Router.open('jobDetails','${job.jobCardID}')">
+            <div class="jobCard ${typeClass}" data-job-id="${this.escape(job.jobCardID)}" onclick="Router.open('jobDetails', this.dataset.jobId)">
                 <div class="jobCardHeader">
                     <div class="jobCardHeadLeft">
-                        <div class="jobCardLabel">Job Card No</div>
+                        <div class="jobCardLabel">Job Card</div>
                         <div class="jobCardNumber">${this.escape(job.jobCardNo)}</div>
                     </div>
-                    <div class="jobBadge">${this.escape(job.serviceType)}</div>
+                    <div class="jobBadge">${this.escape(job.serviceType || "-")}</div>
                 </div>
 
                 <div class="jobCardBody">
                     <div class="jobMetaGrid">
                         <div class="jobMetaItem">
-                            <div class="label">Regn No</div>
-                            <div class="value">${this.escape(job.regNo)}</div>
+                            <div class="label">Registration</div>
+                            <div class="value">${this.escape(job.regNo || "-")}</div>
                         </div>
                         <div class="jobMetaItem">
                             <div class="label">Model</div>
-                            <div class="value">${this.escape(job.model)}</div>
+                            <div class="value">${this.escape(job.model || "-")}</div>
+                        </div>
+                        <div class="jobMetaItem">
+                            <div class="label">Service Type</div>
+                            <div class="value">${this.escape(job.serviceType || "-")}</div>
                         </div>
                         <div class="jobMetaItem">
                             <div class="label">Supervisor</div>
@@ -43,20 +48,28 @@ const JobCard = {
                             <div class="label">Mechanic</div>
                             <div class="value">${this.escape(job.mechanic || "-")}</div>
                         </div>
+                        <div class="jobMetaItem">
+                            <div class="label">Estimated Delivery</div>
+                            <div class="value">${this.escape(estimatedDelivery || "-")}</div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="jobCardFooter">
                     <div class="jobStatusSummary">
-                        <span class="jobStatusLabel">Current Status</span>
-                        <strong>${this.escape(currentStatus)}</strong>
+                        <div>
+                            <span class="jobStatusLabel">Current Status</span>
+                            <strong>${this.escape(currentStatus)}</strong>
+                        </div>
+                        <div class="jobStatusTag ${currentStatus.toLowerCase()}">${this.escape(currentStatus)}</div>
                     </div>
 
                     <div class="jobStatusPills">
-                        <span class="statusPill ${job.assigned ? "done" : ""}">Assigned</span>
-                        <span class="statusPill ${job.started ? "done" : ""}">Started</span>
-                        <span class="statusPill ${job.completed ? "done" : ""}">Completed</span>
-                        <span class="statusPill ${job.delivered ? "done" : ""}">Delivered</span>
+                        <span class="statusPill ${this.isDone(job, "new") ? "done" : ""}">New</span>
+                        <span class="statusPill ${this.isDone(job, "assigned") ? "done" : ""}">Assigned</span>
+                        <span class="statusPill ${this.isDone(job, "started") ? "done" : ""}">Started</span>
+                        <span class="statusPill ${this.isDone(job, "completed") ? "done" : ""}">Completed</span>
+                        <span class="statusPill ${this.isDone(job, "delivered") ? "done" : ""}">Delivered</span>
                     </div>
                 </div>
             </div>
@@ -72,35 +85,67 @@ const JobCard = {
             .toLowerCase()
             .replace(/\s+/g, "");
 
-        if (normalizedStatus === "assigned") {
+        if (job.delivered || normalizedStatus === "delivered") {
+            return "Delivered";
+        }
+
+        if (job.completed || normalizedStatus === "completed") {
+            return "Completed";
+        }
+
+        if (job.started || normalizedStatus === "started") {
+            return "Started";
+        }
+
+        if (job.assigned || normalizedStatus === "assigned") {
             return "Assigned";
         }
 
-        if (normalizedStatus === "started") {
-            return "Started";
+        return normalizedStatus === "new" ? "New" : "New";
+
+    },
+
+    isDone(job, state) {
+
+        const normalizedStatus = (job.status || "")
+            .toString()
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, "");
+
+        switch (state) {
+            case "new":
+                return !normalizedStatus && !job.assigned && !job.started && !job.completed && !job.delivered;
+            case "assigned":
+                return job.assigned || normalizedStatus === "assigned";
+            case "started":
+                return job.started || normalizedStatus === "started";
+            case "completed":
+                return job.completed || normalizedStatus === "completed";
+            case "delivered":
+                return job.delivered || normalizedStatus === "delivered";
+            default:
+                return false;
         }
 
-        if (normalizedStatus === "completed") {
-            return "Completed";
+    },
+
+    formatEstimatedDelivery(value) {
+
+        if (!value) {
+            return "";
         }
 
-        if (normalizedStatus === "delivered") {
-            return "Delivered";
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+            return value;
         }
 
-        if (job.delivered) {
-            return "Delivered";
-        }
-
-        if (job.completed) {
-            return "Completed";
-        }
-
-        if (job.started) {
-            return "Started";
-        }
-
-        return "Assigned";
+        return date.toLocaleString([], {
+            dateStyle: "medium",
+            timeStyle: "short"
+        });
 
     },
 
