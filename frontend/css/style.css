@@ -1,0 +1,455 @@
+/* ===========================================
+   MotoFlow Main Layout
+===========================================*/
+
+/* HEADER */
+
+.topbar{
+
+    height:60px;
+
+    background:var(--primary);
+
+    color:#fff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 16px;
+
+    box-shadow:var(--shadow);
+
+}
+
+.appTitle{
+
+    font-size:20px;
+
+    font-weight:700;
+
+}
+
+.userName{
+
+    font-size:13px;
+
+}
+
+/* ===========================================
+BOTTOM NAV
+===========================================*/
+
+.bottomNav{
+
+    height:65px;
+
+    display:flex;
+
+    justify-content:space-around;
+
+    align-items:center;
+
+}
+
+.navButton{
+
+    width:25%;
+
+    background:none;
+
+    color:#666;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:4px;
+
+    font-size:12px;
+
+}
+
+.navButton.active{
+
+    color:var(--primary);
+
+    font-weight:bold;
+
+}
+
+.material-symbols-outlined{
+
+    font-size:24px;
+
+}
+
+/* ===========================================
+DASHBOARD
+===========================================*/
+
+.dashboardGrid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:10px;
+
+    margin-top:10px;
+
+}
+
+.statCard{
+
+    background:#fff;
+
+    border-radius:12px;
+
+    padding:16px;
+
+    text-align:center;
+
+    box-shadow:var(--shadow);
+
+}
+
+.statTitle{
+
+    font-size:13px;
+
+    color:#777;
+
+}
+
+.statValue{
+
+    margin-top:10px;
+
+    font-size:30px;
+
+    font-weight:bold;
+
+}
+
+/* ===========================================
+JOB CARD
+===========================================*/
+
+.jobCard{
+
+    background:#fff;
+
+    border-radius:12px;
+
+    box-shadow:var(--shadow);
+
+    margin-bottom:10px;
+
+    overflow:hidden;
+
+}
+
+/* Service Type Colors */
+
+.jobCard.fsc{
+
+    border-left:6px solid #4FC3F7;
+
+}
+
+.jobCard.paid{
+
+    border-left:6px solid #FFD54F;
+
+}
+
+.jobCard.repair{
+
+    border-left:6px solid #EC407A;
+
+}
+
+/* Top */
+
+.jobTop{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    padding:10px;
+
+}
+
+/* Left */
+
+.jobLeft{
+
+    flex:1;
+
+}
+
+/* Row */
+
+.jobRow{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:8px;
+
+    margin-bottom:6px;
+
+}
+
+/* Label */
+
+.label{
+
+    color:#777;
+
+    font-size:11px;
+
+}
+
+.value{
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+/* Right */
+
+.jobRight{
+
+    width:95px;
+
+    text-align:right;
+
+}
+
+/* ===========================================
+STATUS
+===========================================*/
+
+.statusList{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
+
+}
+
+.statusButton{
+
+    border-radius:20px;
+
+    padding:5px 10px;
+
+    border:1px solid var(--border);
+
+    background:#fff;
+
+    font-size:12px;
+
+}
+
+.statusButton.done{
+
+    background:#198754;
+
+    color:#fff;
+
+}
+
+/* ===========================================
+ACTIONS
+===========================================*/
+
+.actionButtons{
+
+    display:flex;
+
+    gap:6px;
+
+    margin-top:8px;
+
+}
+
+.actionButton{
+
+    flex:1;
+
+    padding:10px;
+
+    border-radius:8px;
+
+    background:var(--primary);
+
+    color:#fff;
+
+    font-weight:bold;
+
+}
+
+/* ===========================================
+LOGIN
+===========================================*/
+
+.loginContainer{
+
+    height:100vh;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:#F5F7FA;
+
+}
+
+.loginCard{
+
+    width:95%;
+
+    max-width:360px;
+
+    background:#fff;
+
+    border-radius:16px;
+
+    padding:24px;
+
+    box-shadow:var(--shadow);
+
+}
+
+.logo{
+
+    text-align:center;
+
+    font-size:32px;
+
+    font-weight:bold;
+
+    color:var(--primary);
+
+}
+
+.loginTitle{
+
+    text-align:center;
+
+    margin:12px 0 24px;
+
+    font-size:20px;
+
+}
+
+.loginCard input{
+
+    margin-bottom:12px;
+
+}
+
+.loginButton{
+
+    width:100%;
+
+    background:var(--primary);
+
+    color:#fff;
+
+    padding:12px;
+
+    font-size:15px;
+
+}
+
+/* ===========================================
+REPORTS
+===========================================*/
+
+.reportCard{
+
+    background:#fff;
+
+    border-radius:12px;
+
+    padding:16px;
+
+    box-shadow:var(--shadow);
+
+    margin-bottom:10px;
+
+}
+
+.reportTitle{
+
+    font-weight:bold;
+
+    margin-bottom:10px;
+
+}
+
+.reportButtons{
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+.reportButtons button{
+
+    flex:1;
+
+    padding:10px;
+
+}
+
+/* ===========================================
+FLOAT BUTTON
+===========================================*/
+
+.fab{
+
+    width:60px;
+
+    height:60px;
+
+    border-radius:50%;
+
+    background:var(--primary);
+
+    color:#fff;
+
+    position:fixed;
+
+    right:20px;
+
+    bottom:85px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    box-shadow:var(--shadow);
+
+}

@@ -1,0 +1,211 @@
+/* =====================================
+   MotoFlow Theme
+   Version : 1.0
+===================================== */
+
+:root{
+
+    /* Primary */
+
+    --primary:#0B5ED7;
+    --primary-dark:#084298;
+    --primary-light:#DCEBFF;
+
+    /* Background */
+
+    --background:#F5F7FA;
+    --surface:#FFFFFF;
+
+    /* Text */
+
+    --text:#212529;
+    --text-light:#6C757D;
+
+    /* Border */
+
+    --border:#DEE2E6;
+
+    /* Status */
+
+    --success:#198754;
+    --warning:#FFC107;
+    --danger:#DC3545;
+
+    /* Service Type */
+
+    --fsc:#D9F2FF;
+    --paid:#FFF4CC;
+    --repair:#FFD6E7;
+
+    /* Radius */
+
+    --radius:12px;
+
+    /* Shadow */
+
+    --shadow:
+        0 2px 8px rgba(0,0,0,.08);
+
+    /* Font */
+
+    --font:'Roboto',sans-serif;
+
+}
+
+/* ===================================== */
+
+*{
+
+    margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+}
+
+html{
+
+    height:100%;
+
+}
+
+body{
+
+    font-family:var(--font);
+
+    background:var(--background);
+
+    color:var(--text);
+
+    height:100%;
+
+}
+
+/* App */
+
+#app{
+
+    display:flex;
+
+    flex-direction:column;
+
+    height:100vh;
+
+}
+
+/* Header */
+
+header{
+
+    height:60px;
+
+    background:var(--primary);
+
+    color:#fff;
+
+}
+
+/* Screen */
+
+main{
+
+    flex:1;
+
+    overflow:auto;
+
+    padding:10px;
+
+}
+
+/* Bottom Navigation */
+
+nav{
+
+    height:65px;
+
+    background:#fff;
+
+    border-top:1px solid var(--border);
+
+}
+
+/* Card */
+
+.card{
+
+    background:#fff;
+
+    border-radius:var(--radius);
+
+    box-shadow:var(--shadow);
+
+    margin-bottom:10px;
+
+}
+
+/* Buttons */
+
+button{
+
+    border:none;
+
+    cursor:pointer;
+
+    border-radius:8px;
+
+    font-size:14px;
+
+}
+
+/* Input */
+
+input,select{
+
+    width:100%;
+
+    border:1px solid var(--border);
+
+    border-radius:8px;
+
+    padding:10px;
+
+    font-size:14px;
+
+}
+
+/* Status */
+
+.success{
+
+    color:var(--success);
+
+}
+
+.warning{
+
+    color:#856404;
+
+}
+
+.danger{
+
+    color:var(--danger);
+
+}
+
+/* Scroll */
+
+::-webkit-scrollbar{
+
+    width:5px;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#CCC;
+
+    border-radius:10px;
+
+}
