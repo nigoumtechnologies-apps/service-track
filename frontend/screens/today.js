@@ -8,6 +8,7 @@ const Today = {
     jobs: [],
     searchText: "",
     statusFilter: "all",
+    roleKey: "supervisor",
     selectedJobID: null,
     panelEventsBound: false,
 
@@ -52,21 +53,32 @@ const Today = {
 
     renderScreen() {
 
-        const totalCount = this.jobs.length;
         const searchJobs = this.getSearchJobs();
+        const roleJobs = this.getRoleVisibleJobs(searchJobs);
+        const totalCount = roleJobs.length;
         const filteredCount = this.getVisibleJobs().length;
-        const counts = this.getStatusCounts(searchJobs);
+        const counts = this.getStatusCounts(roleJobs);
+        const role = this.getRole();
 
         document.getElementById("screen").innerHTML = `
             <div class="workshopScreen">
                 <div class="workshopToolbar">
-                    <div class="actionButtons todayActions">
-                        <button class="actionButton" onclick="Today.newJobCard()">
-                            + New Job Card
-                        </button>
-                        <button class="actionButton" onclick="Today.bulkUpload()">
-                            Bulk Upload
-                        </button>
+                    <div class="reportCard roleCard">
+                        <div class="roleCardHeader">
+                            <div>
+                                <div class="roleCardLabel">Active Role</div>
+                                <strong>${this.getRoleLabel(role)}</strong>
+                            </div>
+                            <span class="roleCardHint">Temporary selector</span>
+                        </div>
+
+                        <div class="roleSelector">
+                            ${this.renderRoleButtons(role)}
+                        </div>
+                    </div>
+
+                    <div class="todayActions">
+                        ${this.renderTopActions(role)}
                     </div>
 
                     <div class="reportCard workshopCounterCard">
@@ -132,7 +144,7 @@ const Today = {
 
                 <div id="jobPanelBody" class="jobPanelBody"></div>
 
-                <div class="jobPanelFooter">
+                        <div class="jobPanelFooter">
                     <button id="jobPanelAction" class="jobPanelAction" type="button" onclick="Today.submitStatusUpdate()">
                         Update Status
                     </button>
@@ -161,8 +173,10 @@ const Today = {
         }
 
         const searchJobs = this.getSearchJobs();
+        const roleJobs = this.getRoleVisibleJobs(searchJobs);
         const visibleJobs = this.getVisibleJobs();
-        const counts = this.getStatusCounts(searchJobs);
+        const counts = this.getStatusCounts(roleJobs);
+        const role = this.getRole();
 
         filteredCount.textContent = visibleJobs.length;
         counterMeta.innerHTML = `
@@ -194,14 +208,16 @@ const Today = {
 
         jobList.innerHTML = visibleJobs.map(job => JobCard.create(job)).join("");
         this.syncJobPanel();
+        this.applyRolePermissions(role);
 
     },
 
     renderFilterButtons() {
 
         const searchJobs = this.getSearchJobs();
-        const counts = this.getStatusCounts(searchJobs);
-        const totalCount = searchJobs.length;
+        const roleJobs = this.getRoleVisibleJobs(searchJobs);
+        const counts = this.getStatusCounts(roleJobs);
+        const totalCount = roleJobs.length;
         const filters = [
             { key: "all", label: "ALL", count: totalCount },
             { key: "new", label: "NEW", count: counts.new },
@@ -252,11 +268,101 @@ const Today = {
 
     getVisibleJobs() {
 
-        return this.getSearchJobs().filter(job => {
+        return this.getRoleVisibleJobs(this.getSearchJobs()).filter(job => {
             const status = this.getStatus(job);
 
             return this.statusFilter === "all" || status === this.statusFilter;
         });
+
+    },
+
+    getRoleVisibleJobs(jobs) {
+
+        const role = this.getRole();
+
+        if (role === "mechanic") {
+            return (jobs || []).filter(job => this.getStatus(job) !== "new");
+        }
+
+        return jobs || [];
+
+    },
+
+    getRole() {
+
+        const savedRole = localStorage.getItem("motoflow_role");
+        const role = (savedRole || this.roleKey || "supervisor").toLowerCase();
+        const allowedRoles = ["supervisor", "mechanic", "customercare", "owner"];
+
+        if (allowedRoles.includes(role)) {
+            this.roleKey = role;
+            return role;
+        }
+
+        this.roleKey = "supervisor";
+        localStorage.setItem("motoflow_role", this.roleKey);
+        return this.roleKey;
+
+    },
+
+    getRoleLabel(role) {
+
+        return {
+            supervisor: "Supervisor",
+            mechanic: "Mechanic",
+            customercare: "Customer Care",
+            owner: "Owner"
+        }[role] || "Supervisor";
+
+    },
+
+    renderRoleButtons(activeRole) {
+
+        const roles = [
+            { key: "supervisor", label: "Supervisor" },
+            { key: "mechanic", label: "Mechanic" },
+            { key: "customercare", label: "Customer Care" },
+            { key: "owner", label: "Owner" }
+        ];
+
+        return roles.map(role => `
+            <button
+                type="button"
+                class="roleButton ${activeRole === role.key ? "active" : ""}"
+                onclick="Today.setRole('${role.key}')">
+                ${role.label}
+            </button>
+        `).join("");
+
+    },
+
+    setRole(roleKey) {
+
+        this.roleKey = roleKey;
+        localStorage.setItem("motoflow_role", roleKey);
+        this.updateView();
+        this.syncJobPanel();
+
+    },
+
+    renderTopActions(role) {
+
+        if (role !== "supervisor") {
+            return `
+                <div class="roleReadOnlyNote">
+                    Workshop actions are locked for this role.
+                </div>
+            `;
+        }
+
+        return `
+            <button class="actionButton" onclick="Today.newJobCard()">
+                + New Job Card
+            </button>
+            <button class="actionButton" onclick="Today.bulkUpload()">
+                Bulk Upload
+            </button>
+        `;
 
     },
 
@@ -311,6 +417,75 @@ const Today = {
         }
 
         return "new";
+
+    },
+
+    getNextActionForRole(job, role) {
+
+        const statusKey = JobCard.getStatusInfo(job).key;
+
+        const roleActionMap = {
+            supervisor: {
+                new: { label: "Assign", status: "Assigned" },
+                assigned: { label: "Start", status: "Started" },
+                started: { label: "Complete", status: "Completed" },
+                completed: { label: "Deliver", status: "Delivered" },
+                delivered: null
+            },
+            mechanic: {
+                assigned: { label: "Start", status: "Started" },
+                started: { label: "Complete", status: "Completed" },
+                completed: null,
+                delivered: null,
+                new: null
+            },
+            customercare: {
+                completed: { label: "Deliver", status: "Delivered" },
+                delivered: null,
+                new: null,
+                assigned: null,
+                started: null
+            },
+            owner: {
+                new: null,
+                assigned: null,
+                started: null,
+                completed: null,
+                delivered: null
+            }
+        };
+
+        const roleMap = roleActionMap[role] || roleActionMap.supervisor;
+
+        return roleMap[statusKey] || null;
+
+    },
+
+    applyRolePermissions(role) {
+
+        const actionButton = document.getElementById("jobPanelAction");
+        const job = this.selectedJobID ? this.findJob(this.selectedJobID) : null;
+
+        if (!actionButton || !job) {
+            return;
+        }
+
+        const nextAction = this.getNextActionForRole(job, role);
+
+        if (!nextAction) {
+            actionButton.hidden = true;
+            return;
+        }
+
+        actionButton.hidden = false;
+        actionButton.textContent = nextAction.label;
+        actionButton.dataset.nextStatus = nextAction.status;
+
+    },
+
+    getAllowedAction(job) {
+
+        return this.getNextActionForRole(job, this.getRole());
 
     },
 
@@ -431,7 +606,7 @@ const Today = {
         const jobPanelTitle = document.getElementById("jobPanelTitle");
         const jobPanelBody = document.getElementById("jobPanelBody");
         const jobPanelAction = document.getElementById("jobPanelAction");
-        const nextAction = JobCard.getNextAction(job);
+        const nextAction = this.getAllowedAction(job);
 
         if (jobPanelTitle) {
             jobPanelTitle.textContent = `Job Card ${job.jobCardNo || "-"}`;
@@ -458,9 +633,17 @@ const Today = {
     renderJobPanelBody(job) {
 
         const statusInfo = JobCard.getStatusInfo(job);
-        const nextAction = JobCard.getNextAction(job);
+        const nextAction = this.getAllowedAction(job);
         const overdueInfo = JobCard.getOverdueInfo(job);
         const timelineStages = JobCard.getTimelineStages(job);
+        const role = this.getRole();
+        const panelNote = nextAction
+            ? `Next: ${nextAction.label}`
+            : statusInfo.key === "delivered"
+                ? "Vehicle Delivered"
+                : role === "owner"
+                    ? "Read only"
+                    : "No available action";
 
         return `
             <div class="jobPanelSection">
@@ -492,12 +675,12 @@ const Today = {
                 </div>
             </div>
 
-            <div class="jobPanelSection">
-                <div class="jobPanelSectionTitle">Current Status</div>
-                <div class="jobPanelStatusRow">
-                    <span class="jobPanelStatusBadge ${statusInfo.key}">${this.escape(statusInfo.label)}</span>
-                    <span class="jobPanelStatusNote">${nextAction ? `Next: ${nextAction.label}` : "Vehicle Delivered"}</span>
-                </div>
+                <div class="jobPanelSection">
+                    <div class="jobPanelSectionTitle">Current Status</div>
+                    <div class="jobPanelStatusRow">
+                        <span class="jobPanelStatusBadge ${statusInfo.key}">${this.escape(statusInfo.label)}</span>
+                    <span class="jobPanelStatusNote">${this.escape(panelNote)}</span>
+                    </div>
                 ${overdueInfo.html}
             </div>
 
@@ -531,7 +714,7 @@ const Today = {
             return;
         }
 
-        const nextAction = JobCard.getNextAction(job);
+        const nextAction = this.getAllowedAction(job);
 
         if (!nextAction) {
             this.closeJobPanel();
@@ -571,7 +754,7 @@ const Today = {
 
             if (actionButton) {
                 const refreshedJob = this.selectedJobID ? this.findJob(this.selectedJobID) : null;
-                const refreshedAction = refreshedJob ? JobCard.getNextAction(refreshedJob) : null;
+                const refreshedAction = refreshedJob ? this.getAllowedAction(refreshedJob) : null;
                 actionButton.disabled = false;
                 actionButton.textContent = refreshedAction ? refreshedAction.label : "Update Status";
             }
@@ -583,6 +766,23 @@ const Today = {
     async refreshWorkshop() {
 
         await this.render();
+
+    },
+
+    renderRoleButtons(role) {
+
+        const roles = [
+            { key: "supervisor", label: "Supervisor" },
+            { key: "mechanic", label: "Mechanic" },
+            { key: "customercare", label: "Customer Care" },
+            { key: "owner", label: "Owner" }
+        ];
+
+        return roles.map(item => `
+            <button type="button" class="roleButton ${role === item.key ? "active" : ""}" onclick="Today.setRole('${item.key}')">
+                ${item.label}
+            </button>
+        `).join("");
 
     }
 
