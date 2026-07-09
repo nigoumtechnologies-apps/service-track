@@ -18,7 +18,7 @@ const JobCard = {
         const overdueInfo = this.getOverdueInfo(job);
 
         return `
-            <div class="jobCard ${typeClass}" data-job-id="${this.escape(job.jobCardID)}" onclick="Router.open('jobDetails', this.dataset.jobId)">
+            <div class="jobCard ${typeClass}" data-job-id="${this.escape(job.jobCardID)}" onclick="Today.openJobPanel(this.dataset.jobId)">
                 <div class="jobCardHeader">
                     <div class="jobCardHeadLeft">
                         <div class="jobCardLabel">Job Card</div>
@@ -38,7 +38,7 @@ const JobCard = {
                             <div class="value">${this.escape(job.model || "-")}</div>
                         </div>
                         <div class="jobMetaItem">
-                            <div class="label">Service Type</div>
+                            <div class="label">Service</div>
                             <div class="value">${this.escape(job.serviceType || "-")}</div>
                         </div>
                         <div class="jobMetaItem">
@@ -110,6 +110,54 @@ const JobCard = {
     getCurrentStatus(job) {
 
         return this.getStatusInfo(job).label;
+
+    },
+
+    getNextAction(job) {
+
+        const statusKey = this.getStatusInfo(job).key;
+
+        const nextActionMap = {
+            new: { label: "Assign", status: "Assigned" },
+            assigned: { label: "Start", status: "Started" },
+            started: { label: "Complete", status: "Completed" },
+            completed: { label: "Deliver", status: "Delivered" },
+            delivered: null
+        };
+
+        return nextActionMap[statusKey] || nextActionMap.new;
+
+    },
+
+    getTimelineStages(job) {
+
+        const stageOrder = [
+            { key: "new", label: "NEW" },
+            { key: "assigned", label: "ASSIGNED" },
+            { key: "started", label: "STARTED" },
+            { key: "completed", label: "COMPLETED" },
+            { key: "delivered", label: "DELIVERED" }
+        ];
+
+        const currentStageKey = this.getStatusInfo(job).key;
+        const currentIndex = stageOrder.findIndex(stage => stage.key === currentStageKey);
+        const activeIndex = currentIndex >= 0 ? currentIndex : 0;
+
+        return stageOrder.map((stage, index) => {
+            let state = "future";
+
+            if (index < activeIndex) {
+                state = "completed";
+            } else if (index === activeIndex) {
+                state = "current";
+            }
+
+            return {
+                key: stage.key,
+                label: stage.label,
+                state
+            };
+        });
 
     },
 

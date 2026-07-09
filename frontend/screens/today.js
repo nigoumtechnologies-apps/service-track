@@ -8,6 +8,8 @@ const Today = {
     jobs: [],
     searchText: "",
     statusFilter: "all",
+    selectedJobID: null,
+    panelEventsBound: false,
 
     async render() {
 
@@ -116,9 +118,34 @@ const Today = {
                     </span>
                 </div>
             </div>
+
+            <div id="jobPanelBackdrop" class="jobPanelBackdrop" onclick="Today.closeJobPanel()"></div>
+
+            <aside id="jobPanel" class="jobPanel" aria-hidden="true">
+                <div class="jobPanelHeader">
+                    <div>
+                        <div class="jobPanelKicker">Workshop Details</div>
+                        <h2 class="jobPanelTitle" id="jobPanelTitle">Job Card</h2>
+                    </div>
+                    <button class="jobPanelClose" type="button" onclick="Today.closeJobPanel()">Close</button>
+                </div>
+
+                <div id="jobPanelBody" class="jobPanelBody"></div>
+
+                <div class="jobPanelFooter">
+                    <button id="jobPanelAction" class="jobPanelAction" type="button" onclick="Today.submitStatusUpdate()">
+                        Update Status
+                    </button>
+                    <button class="jobPanelSecondary" type="button" onclick="Today.closeJobPanel()">
+                        Cancel
+                    </button>
+                </div>
+            </aside>
         `;
 
+        this.bindPanelEvents();
         this.updateView();
+        this.syncJobPanel();
 
     },
 
@@ -166,13 +193,15 @@ const Today = {
         }
 
         jobList.innerHTML = visibleJobs.map(job => JobCard.create(job)).join("");
+        this.syncJobPanel();
 
     },
 
     renderFilterButtons() {
 
-        const counts = this.getStatusCounts(this.getSearchJobs());
-        const totalCount = this.jobs.length;
+        const searchJobs = this.getSearchJobs();
+        const counts = this.getStatusCounts(searchJobs);
+        const totalCount = searchJobs.length;
         const filters = [
             { key: "all", label: "ALL", count: totalCount },
             { key: "new", label: "NEW", count: counts.new },
@@ -318,6 +347,7 @@ const Today = {
     clearSearch() {
 
         this.searchText = "";
+        this.statusFilter = "all";
         const input = document.getElementById("jobSearch");
         if (input) {
             input.value = "";
@@ -337,6 +367,222 @@ const Today = {
 
         this.statusFilter = filter;
         this.updateView();
+
+    },
+
+    bindPanelEvents() {
+
+        if (this.panelEventsBound) {
+            return;
+        }
+
+        this.panelEventsBound = true;
+
+        document.addEventListener("keydown", event => {
+            if (event.key === "Escape" && this.selectedJobID) {
+                this.closeJobPanel();
+            }
+        });
+
+    },
+
+    openJobPanel(jobCardID) {
+
+        const job = this.findJob(jobCardID);
+
+        if (!job) {
+            return;
+        }
+
+        this.selectedJobID = jobCardID;
+        this.syncJobPanel();
+
+    },
+
+    closeJobPanel() {
+
+        this.selectedJobID = null;
+        this.syncJobPanel();
+
+    },
+
+    syncJobPanel() {
+
+        const backdrop = document.getElementById("jobPanelBackdrop");
+        const panel = document.getElementById("jobPanel");
+        const body = document.body;
+        const job = this.selectedJobID ? this.findJob(this.selectedJobID) : null;
+
+        if (!backdrop || !panel) {
+            return;
+        }
+
+        const isOpen = !!job;
+
+        backdrop.classList.toggle("open", isOpen);
+        panel.classList.toggle("open", isOpen);
+        panel.setAttribute("aria-hidden", isOpen ? "false" : "true");
+        body.classList.toggle("panel-open", isOpen);
+
+        if (!job) {
+            return;
+        }
+
+        const jobPanelTitle = document.getElementById("jobPanelTitle");
+        const jobPanelBody = document.getElementById("jobPanelBody");
+        const jobPanelAction = document.getElementById("jobPanelAction");
+        const nextAction = JobCard.getNextAction(job);
+
+        if (jobPanelTitle) {
+            jobPanelTitle.textContent = `Job Card ${job.jobCardNo || "-"}`;
+        }
+
+        if (jobPanelBody) {
+            jobPanelBody.innerHTML = this.renderJobPanelBody(job);
+        }
+
+        if (jobPanelAction) {
+            if (nextAction) {
+                jobPanelAction.hidden = false;
+                jobPanelAction.textContent = nextAction.label;
+                jobPanelAction.disabled = false;
+                jobPanelAction.dataset.nextStatus = nextAction.status;
+            } else {
+                jobPanelAction.hidden = true;
+                jobPanelAction.dataset.nextStatus = "";
+            }
+        }
+
+    },
+
+    renderJobPanelBody(job) {
+
+        const statusInfo = JobCard.getStatusInfo(job);
+        const nextAction = JobCard.getNextAction(job);
+        const overdueInfo = JobCard.getOverdueInfo(job);
+        const timelineStages = JobCard.getTimelineStages(job);
+
+        return `
+            <div class="jobPanelSection">
+                <div class="jobPanelGrid">
+                    <div class="jobPanelField">
+                        <span>Registration Number</span>
+                        <strong>${this.escape(job.regNo || "-")}</strong>
+                    </div>
+                    <div class="jobPanelField">
+                        <span>Model</span>
+                        <strong>${this.escape(job.model || "-")}</strong>
+                    </div>
+                    <div class="jobPanelField">
+                        <span>Service Type</span>
+                        <strong>${this.escape(job.serviceType || "-")}</strong>
+                    </div>
+                    <div class="jobPanelField">
+                        <span>Supervisor</span>
+                        <strong>${this.escape(job.supervisor || "-")}</strong>
+                    </div>
+                    <div class="jobPanelField">
+                        <span>Mechanic</span>
+                        <strong>${this.escape(job.mechanic || "-")}</strong>
+                    </div>
+                    <div class="jobPanelField">
+                        <span>Estimated Delivery</span>
+                        <strong>${this.escape(JobCard.formatEstimatedDelivery(job.estimatedDelivery) || "-")}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="jobPanelSection">
+                <div class="jobPanelSectionTitle">Current Status</div>
+                <div class="jobPanelStatusRow">
+                    <span class="jobPanelStatusBadge ${statusInfo.key}">${this.escape(statusInfo.label)}</span>
+                    <span class="jobPanelStatusNote">${nextAction ? `Next: ${nextAction.label}` : "Vehicle Delivered"}</span>
+                </div>
+                ${overdueInfo.html}
+            </div>
+
+            <div class="jobPanelSection">
+                <div class="jobPanelSectionTitle">Timeline</div>
+                <div class="jobTimeline">
+                    ${timelineStages.map(stage => `
+                        <div class="timelineItem ${stage.state}">
+                            <div class="timelineMark">${stage.state === "completed" ? "✓" : "•"}</div>
+                            <div class="timelineText">${stage.label}</div>
+                        </div>
+                    `).join("")}
+                </div>
+            </div>
+
+            <div class="jobPanelSection">
+                <div class="jobPanelSectionTitle">Remarks</div>
+                <div class="jobPanelRemarks">
+                    ${this.escape(job.remarks || "No remarks")}
+                </div>
+            </div>
+        `;
+
+    },
+
+    async submitStatusUpdate() {
+
+        const job = this.selectedJobID ? this.findJob(this.selectedJobID) : null;
+
+        if (!job) {
+            return;
+        }
+
+        const nextAction = JobCard.getNextAction(job);
+
+        if (!nextAction) {
+            this.closeJobPanel();
+            return;
+        }
+
+        const actionButton = document.getElementById("jobPanelAction");
+
+        if (actionButton) {
+            actionButton.disabled = true;
+            actionButton.textContent = "Updating...";
+        }
+
+        try {
+
+            const result = await API.updateStatus({
+                jobCardID: job.jobCardID,
+                status: nextAction.status,
+                supervisor: job.supervisor,
+                mechanic: job.mechanic,
+                serviceType: job.serviceType,
+                actionBy: "Workshop"
+            });
+
+            alert(result.message || "Status updated");
+
+            if (result.success) {
+                this.closeJobPanel();
+                await this.refreshWorkshop();
+            }
+
+        } catch (err) {
+
+            alert(err.message);
+
+        } finally {
+
+            if (actionButton) {
+                const refreshedJob = this.selectedJobID ? this.findJob(this.selectedJobID) : null;
+                const refreshedAction = refreshedJob ? JobCard.getNextAction(refreshedJob) : null;
+                actionButton.disabled = false;
+                actionButton.textContent = refreshedAction ? refreshedAction.label : "Update Status";
+            }
+
+        }
+
+    },
+
+    async refreshWorkshop() {
+
+        await this.render();
 
     }
 

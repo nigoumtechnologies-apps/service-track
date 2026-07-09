@@ -1728,3 +1728,502 @@ STEP-051 WORKSHOP TUNING
     }
 
 }
+
+body.panel-open{
+
+    overflow:hidden;
+
+}
+
+.jobPanelBackdrop{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(15,23,42,.42);
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:opacity .22s ease;
+
+    z-index:40;
+
+}
+
+.jobPanelBackdrop.open{
+
+    opacity:1;
+
+    pointer-events:auto;
+
+}
+
+.jobPanel{
+
+    position:fixed;
+
+    right:0;
+
+    top:60px;
+
+    bottom:65px;
+
+    width:min(440px, 100vw);
+
+    background:#fff;
+
+    box-shadow:-14px 0 40px rgba(15,23,42,.18);
+
+    transform:translateX(105%);
+
+    transition:transform .24s ease;
+
+    z-index:41;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.jobPanel.open{
+
+    transform:translateX(0);
+
+}
+
+.jobPanelHeader{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    justify-content:space-between;
+
+    gap:12px;
+
+    padding:16px;
+
+    border-bottom:1px solid var(--border);
+
+}
+
+.jobPanelKicker{
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+    color:var(--text-light);
+
+    font-weight:700;
+
+}
+
+.jobPanelTitle{
+
+    margin-top:4px;
+
+    font-size:18px;
+
+    line-height:1.3;
+
+}
+
+.jobPanelClose{
+
+    flex:0 0 auto;
+
+    padding:8px 12px;
+
+    border-radius:10px;
+
+    background:var(--background);
+
+    color:var(--text);
+
+    border:1px solid var(--border);
+
+    font-weight:700;
+
+}
+
+.jobPanelBody{
+
+    flex:1;
+
+    overflow:auto;
+
+    padding:16px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:14px;
+
+}
+
+.jobPanelSection{
+
+    background:var(--background);
+
+    border:1px solid var(--border);
+
+    border-radius:16px;
+
+    padding:14px;
+
+}
+
+.jobPanelSectionTitle{
+
+    font-size:12px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+    color:var(--text-light);
+
+    font-weight:700;
+
+    margin-bottom:10px;
+
+}
+
+.jobPanelGrid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+
+    gap:12px;
+
+}
+
+.jobPanelField{
+
+    min-width:0;
+
+}
+
+.jobPanelField span{
+
+    display:block;
+
+    font-size:11px;
+
+    color:var(--text-light);
+
+    text-transform:uppercase;
+
+    letter-spacing:.05em;
+
+    margin-bottom:4px;
+
+    font-weight:700;
+
+}
+
+.jobPanelField strong{
+
+    font-size:14px;
+
+    line-height:1.35;
+
+    word-break:break-word;
+
+}
+
+.jobPanelStatusRow{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+.jobPanelStatusBadge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    padding:7px 10px;
+
+    border-radius:999px;
+
+    color:#fff;
+
+    font-size:11px;
+
+    font-weight:700;
+
+    text-transform:uppercase;
+
+    letter-spacing:.04em;
+
+}
+
+.jobPanelStatusBadge.new{
+
+    background:#6C757D;
+
+}
+
+.jobPanelStatusBadge.assigned{
+
+    background:#0D6EFD;
+
+}
+
+.jobPanelStatusBadge.started{
+
+    background:#198754;
+
+}
+
+.jobPanelStatusBadge.completed{
+
+    background:#6F42C1;
+
+}
+
+.jobPanelStatusBadge.delivered{
+
+    background:#111111;
+
+}
+
+.jobPanelStatusNote{
+
+    font-size:13px;
+
+    color:var(--primary-dark);
+
+    font-weight:700;
+
+}
+
+.jobTimeline{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:8px;
+
+}
+
+.timelineItem{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:10px 12px;
+
+    border-radius:12px;
+
+    background:#fff;
+
+    border:1px solid var(--border);
+
+}
+
+.timelineMark{
+
+    width:24px;
+
+    height:24px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:13px;
+
+    font-weight:800;
+
+    background:#E9ECEF;
+
+    color:#6C757D;
+
+}
+
+.timelineText{
+
+    font-size:13px;
+
+    font-weight:700;
+
+    color:var(--text);
+
+}
+
+.timelineItem.completed{
+
+    border-color:#CFEEDC;
+
+    background:#F1FBF4;
+
+}
+
+.timelineItem.completed .timelineMark{
+
+    background:#198754;
+
+    color:#fff;
+
+}
+
+.timelineItem.current{
+
+    border-color:#D6E6FF;
+
+    background:#EEF5FF;
+
+}
+
+.timelineItem.current .timelineMark{
+
+    background:#0D6EFD;
+
+    color:#fff;
+
+}
+
+.timelineItem.future{
+
+    opacity:.72;
+
+}
+
+.jobPanelRemarks{
+
+    font-size:14px;
+
+    line-height:1.5;
+
+    color:var(--text);
+
+    white-space:pre-line;
+
+}
+
+.jobPanelFooter{
+
+    display:flex;
+
+    gap:10px;
+
+    padding:16px;
+
+    border-top:1px solid var(--border);
+
+}
+
+.jobPanelAction,
+.jobPanelSecondary{
+
+    flex:1;
+
+    padding:12px 14px;
+
+    border-radius:12px;
+
+    font-weight:700;
+
+}
+
+.jobPanelAction{
+
+    background:var(--primary);
+
+    color:#fff;
+
+}
+
+.jobPanelAction:disabled{
+
+    opacity:.7;
+
+    cursor:not-allowed;
+
+}
+
+.jobPanelSecondary{
+
+    background:#fff;
+
+    color:var(--text);
+
+    border:1px solid var(--border);
+
+}
+
+.jobPanelAction[hidden]{
+
+    display:none;
+
+}
+
+@media (max-width: 640px){
+
+    .jobPanel{
+
+        left:0;
+
+        right:0;
+
+        top:auto;
+
+        bottom:65px;
+
+        width:100%;
+
+        height:min(82vh, 720px);
+
+        border-radius:20px 20px 0 0;
+
+        transform:translateY(110%);
+
+        box-shadow:0 -16px 40px rgba(15,23,42,.18);
+
+    }
+
+    .jobPanel.open{
+
+        transform:translateY(0);
+
+    }
+
+    .jobPanelGrid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .jobPanelFooter{
+
+        flex-direction:column;
+
+    }
+
+}
