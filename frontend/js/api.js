@@ -1,20 +1,43 @@
+/*==================================================
+ MotoFlow V2
+ File : frontend/js/api.js
+==================================================*/
+
 const API = {
 
-    WEBAPP: "https://script.google.com/macros/s/AKfycbysNRmwcREJqGHW3zZcq2VpaS0clwiqpSv1TJvi2XZ1L2bAz2iyd1y723QO9yVjvB1wvw/exec",
+    url: "https://script.google.com/macros/s/AKfycbysNRmwcREJqGHW3zZcq2VpaS0clwiqpSv1TJvi2XZ1L2bAz2iyd1y723QO9yVjvB1wvw/exec",
 
-    async get(action) {
+    async getTodayJobCards(){
 
-        const response = await fetch(
-            this.WEBAPP + "?action=" + action
+        const res = await fetch(
+            this.url + "?action=today"
         );
 
-        return await response.json();
+        return await res.json();
 
     },
 
-    async getTodayJobCards() {
+    async updateStatus(data){
 
-        return await this.get("today");
+        const res = await fetch(this.url,{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+
+                action:"updateStatus",
+
+                ...data
+
+            })
+
+        });
+
+        return await res.json();
 
     }
 

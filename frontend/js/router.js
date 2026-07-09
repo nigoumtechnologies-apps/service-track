@@ -1,37 +1,51 @@
-const Router={
+/*==================================================
+ MotoFlow V2.0
+ File : frontend/js/router.js
+==================================================*/
 
-    open(screen){
+const Router = {
+
+    async open(screen){
+
+        document.getElementById("screen").innerHTML = `
+            <div style="
+                padding:80px;
+                text-align:center;
+                font-size:18px;
+                color:#1565C0;
+            ">
+                Loading...
+            </div>
+        `;
 
         switch(screen){
 
             case "dashboard":
 
-                Dashboard.render();
-
+                await Dashboard.render();
                 break;
 
             case "today":
 
-                Today.render();
-
+                await Today.render();
                 break;
 
             case "previous":
 
-                Previous.render();
-
+                if(typeof Previous!=="undefined")
+                    await Previous.render();
                 break;
 
             case "mechanic":
 
-                Mechanic.render();
-
+                if(typeof Mechanic!=="undefined")
+                    await Mechanic.render();
                 break;
 
             case "reports":
 
-                Reports.render();
-
+                if(typeof Reports!=="undefined")
+                    await Reports.render();
                 break;
 
         }

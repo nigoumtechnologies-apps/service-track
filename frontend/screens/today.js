@@ -1,124 +1,93 @@
+/*==================================================
+ MotoFlow V2.0
+ File : frontend/screens/today.js
+==================================================*/
+
 const Today = {
 
-    render(){
+    async render() {
 
-        const jobs=[
+        let html = `
+        <div class="actionButtons">
 
-            {
+            <button class="actionButton">
+                + New Job Card
+            </button>
 
-                jobCardNo:"JC25070001",
+            <button class="actionButton">
+                Bulk Upload
+            </button>
 
-                regNo:"TN47AB1234",
+        </div>
+        `;
 
-                model:"Splendor+",
+        try {
 
-                serviceType:"FSC",
+            const response = await API.getTodayJobCards();
 
-                supervisor:"Kumar",
+            if (!response.success) {
 
-                mechanic:"Ravi",
+                html += `
+                <div class="reportCard">
+                    Unable to load Job Cards
+                </div>
+                `;
 
-                assigned:true,
+                document.getElementById("screen").innerHTML = html;
+                return;
+            }
 
-                started:false,
+            const jobs = response.data;
 
-                completed:false,
+            if (jobs.length === 0) {
 
-                delivered:false
+                html += `
+                <div class="reportCard">
+                    No Job Cards Found
+                </div>
+                `;
 
-            },
+            } else {
 
-            {
+                jobs.forEach(job => {
 
-                jobCardNo:"JC25070002",
+                    html += JobCard.create(job);
 
-                regNo:"TN47CD5678",
-
-                model:"HF Deluxe",
-
-                serviceType:"Paid Service",
-
-                supervisor:"Suresh",
-
-                mechanic:"Arun",
-
-                assigned:true,
-
-                started:true,
-
-                completed:false,
-
-                delivered:false
-
-            },
-
-            {
-
-                jobCardNo:"JC25070003",
-
-                regNo:"TN47EF9876",
-
-                model:"Xtreme",
-
-                serviceType:"General Repair",
-
-                supervisor:"Kumar",
-
-                mechanic:"Bala",
-
-                assigned:true,
-
-                started:true,
-
-                completed:true,
-
-                delivered:false
+                });
 
             }
 
-        ];
+        } catch (err) {
 
-        let html=`
+            html += `
+            <div class="reportCard">
 
-<div class="actionButtons">
+                API Connection Failed
 
-<button class="actionButton">
+                <br><br>
 
-+ New Job Card
+                ${err.message}
 
-</button>
+            </div>
+            `;
 
-<button class="actionButton">
+        }
 
-Bulk Upload
+        html += `
 
-</button>
+        <div class="fab">
 
-</div>
+            <span class="material-symbols-outlined">
 
-`;
+                add
 
-        jobs.forEach(j=>{
+            </span>
 
-            html+=JobCard.create(j);
+        </div>
 
-        });
+        `;
 
-        html+=`
-
-<div class="fab">
-
-<span class="material-symbols-outlined">
-
-add
-
-</span>
-
-</div>
-
-`;
-
-        document.getElementById("screen").innerHTML=html;
+        document.getElementById("screen").innerHTML = html;
 
     }
 
