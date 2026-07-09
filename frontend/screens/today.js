@@ -11,28 +11,13 @@ const Today = {
     roleKey: "supervisor",
     selectedJobID: null,
     panelEventsBound: false,
+    forceRefresh: false,
 
     async render() {
 
         try {
 
-            const response = await API.getTodayJobCards();
-
-            if (!response.success) {
-
-                this.jobs = [];
-
-                document.getElementById("screen").innerHTML = `
-                    <div class="reportCard">
-                        Unable to load Job Cards
-                    </div>
-                `;
-
-                return;
-
-            }
-
-            this.jobs = Array.isArray(response.data) ? response.data : [];
+            await this.loadJobs();
             this.renderScreen();
 
         } catch (err) {
@@ -46,6 +31,34 @@ const Today = {
                     ${err.message}
                 </div>
             `;
+
+        }
+
+    },
+
+    async loadJobs(forceRefresh = false) {
+
+        const shouldRefresh = forceRefresh || this.forceRefresh;
+
+        if (!shouldRefresh && Array.isArray(this.jobs) && this.jobs.length > 0) {
+            return this.jobs;
+        }
+
+        try {
+
+            const response = await API.getTodayJobCards();
+
+            if (!response.success) {
+                this.jobs = [];
+                throw new Error(response.message || "Unable to load Job Cards");
+            }
+
+            this.jobs = Array.isArray(response.data) ? response.data : [];
+            return this.jobs;
+
+        } finally {
+
+            this.forceRefresh = false;
 
         }
 
@@ -144,7 +157,7 @@ const Today = {
 
                 <div id="jobPanelBody" class="jobPanelBody"></div>
 
-                        <div class="jobPanelFooter">
+                <div class="jobPanelFooter">
                     <button id="jobPanelAction" class="jobPanelAction" type="button" onclick="Today.submitStatusUpdate()">
                         Update Status
                     </button>
@@ -157,7 +170,6 @@ const Today = {
 
         this.bindPanelEvents();
         this.updateView();
-        this.syncJobPanel();
 
     },
 
@@ -209,6 +221,7 @@ const Today = {
         jobList.innerHTML = visibleJobs.map(job => JobCard.create(job)).join("");
         this.syncJobPanel();
         this.applyRolePermissions(role);
+        this.notifyDashboard();
 
     },
 
@@ -765,7 +778,16 @@ const Today = {
 
     async refreshWorkshop() {
 
-        await this.render();
+        await this.loadJobs(true);
+        this.renderScreen();
+
+    },
+
+    notifyDashboard() {
+
+        if (typeof Dashboard !== "undefined" && typeof Dashboard.sync === "function") {
+            Dashboard.sync();
+        }
 
     },
 

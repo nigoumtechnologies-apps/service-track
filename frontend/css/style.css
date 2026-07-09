@@ -98,11 +98,256 @@ DASHBOARD
 
     display:grid;
 
-    grid-template-columns:repeat(2,1fr);
+    grid-template-columns:repeat(auto-fit, minmax(154px, 1fr));
+
+    gap:12px;
+
+    margin-top:12px;
+
+}
+
+.dashboardScreen{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+}
+
+.dashboardHeader{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    justify-content:space-between;
+
+    gap:16px;
+
+    padding:18px;
+
+}
+
+.dashboardHeaderCopy{
+
+    min-width:0;
+
+}
+
+.dashboardEyebrow{
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+    color:var(--text-light);
+
+    font-weight:700;
+
+    margin-bottom:6px;
+
+}
+
+.dashboardTitle{
+
+    font-size:22px;
+
+    line-height:1.2;
+
+    margin-bottom:6px;
+
+}
+
+.dashboardSubtitle{
+
+    color:var(--text-light);
+
+    font-size:13px;
+
+    line-height:1.5;
+
+}
+
+.dashboardHeaderMeta{
+
+    flex:0 0 auto;
+
+    min-width:140px;
+
+    padding:12px 14px;
+
+    border-radius:14px;
+
+    background:var(--background);
+
+    border:1px solid var(--border);
+
+    text-align:right;
+
+}
+
+.dashboardMetaLabel{
+
+    display:block;
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+    color:var(--text-light);
+
+    font-weight:700;
+
+    margin-bottom:4px;
+
+}
+
+.dashboardHeaderMeta strong{
+
+    font-size:13px;
+
+    color:var(--text);
+
+}
+
+.dashboardStatCard{
+
+    display:flex;
+
+    flex-direction:column;
 
     gap:10px;
 
-    margin-top:10px;
+    min-height:148px;
+
+    padding:16px;
+
+    text-align:left;
+
+    border-radius:18px;
+
+    border:1px solid rgba(255,255,255,.22);
+
+    box-shadow:var(--shadow);
+
+    color:#fff;
+
+    position:relative;
+
+    overflow:hidden;
+
+    transition:transform .18s ease, box-shadow .18s ease;
+
+}
+
+.dashboardStatCard:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:0 12px 28px rgba(0,0,0,.12);
+
+}
+
+.dashboardStatCard::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:auto -18px -26px auto;
+
+    width:92px;
+
+    height:92px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.12);
+
+    pointer-events:none;
+
+}
+
+.dashboardStatTop{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    justify-content:space-between;
+
+    gap:12px;
+
+}
+
+.dashboardStatLabel{
+
+    font-size:12px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+    font-weight:700;
+
+    line-height:1.35;
+
+}
+
+.dashboardStatArrow{
+
+    font-size:18px;
+
+    line-height:1;
+
+    opacity:.9;
+
+}
+
+.dashboardStatValue{
+
+    margin-top:auto;
+
+    font-size:34px;
+
+    font-weight:800;
+
+    line-height:1;
+
+}
+
+.dashboardStatHint{
+
+    font-size:12px;
+
+    line-height:1.4;
+
+    opacity:.9;
+
+}
+
+.dashboardCard--primary{background:linear-gradient(135deg,#0B5ED7,#0A8FD8);}
+.dashboardCard--muted{background:linear-gradient(135deg,#6C757D,#495057);}
+.dashboardCard--assigned{background:linear-gradient(135deg,#0D6EFD,#3D8BFF);}
+.dashboardCard--started{background:linear-gradient(135deg,#198754,#2FB164);}
+.dashboardCard--completed{background:linear-gradient(135deg,#6F42C1,#8F63D9);}
+.dashboardCard--delivered{background:linear-gradient(135deg,#111111,#3A3A3A);}
+.dashboardCard--overdue{background:linear-gradient(135deg,#D39E00,#F0B429);}
+.dashboardCard--deliveries{background:linear-gradient(135deg,#0F766E,#14B8A6);}
+.dashboardCard--working{background:linear-gradient(135deg,#1D4ED8,#2563EB);}
+.dashboardCard--pending{background:linear-gradient(135deg,#E67E22,#F39C12);}
+.dashboardCard--completion{background:linear-gradient(135deg,#4338CA,#6366F1);}
+.dashboardCard--efficiency{background:linear-gradient(135deg,#047857,#10B981);}
+
+.dashboardErrorCard{
+
+    color:var(--text);
 
 }
 
@@ -135,6 +380,30 @@ DASHBOARD
     font-size:30px;
 
     font-weight:bold;
+
+}
+
+@media (max-width: 640px){
+
+    .dashboardHeader{
+
+        flex-direction:column;
+
+    }
+
+    .dashboardHeaderMeta{
+
+        width:100%;
+
+        text-align:left;
+
+    }
+
+    .dashboardStatCard{
+
+        min-height:136px;
+
+    }
 
 }
 

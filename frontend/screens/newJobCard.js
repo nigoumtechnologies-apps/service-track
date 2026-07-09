@@ -174,6 +174,9 @@ alert(result.message);
 
 if(result.success){
 
+if(typeof Today!=="undefined")
+    Today.forceRefresh=true;
+
 await Router.open("today");
 
 }
