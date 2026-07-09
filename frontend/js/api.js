@@ -1,50 +1,94 @@
 /*==================================================
- MotoFlow V2
+ MotoFlow V2.5
  File : frontend/js/api.js
 ==================================================*/
 
-const API = {
+const API={
 
-    url: "https://script.google.com/macros/s/AKfycbysNRmwcREJqGHW3zZcq2VpaS0clwiqpSv1TJvi2XZ1L2bAz2iyd1y723QO9yVjvB1wvw/exec",
+url:"https://script.google.com/macros/s/AKfycbysNRmwcREJqGHW3zZcq2VpaS0clwiqpSv1TJvi2XZ1L2bAz2iyd1y723QO9yVjvB1wvw/exec",
 
-    async getTodayJobCards(){
+async getTodayJobCards(){
 
-        const res = await fetch(
-            this.url + "?action=today"
-        );
+const res=await fetch(
+this.url+"?action=today"
+);
 
-        return await res.json();
+return await res.json();
 
-    },
+},
 
-    async updateStatus(data){
+async getMasters(){
 
-        const params = new URLSearchParams({
+const res=await fetch(
+this.url+"?action=masters"
+);
 
-            action:"updateStatus",
+return await res.json();
 
-            jobCardID:data.jobCardID,
+},
 
-            status:data.status,
+async saveJobCard(data){
 
-            supervisor:data.supervisor,
+const params=new URLSearchParams({
 
-            mechanic:data.mechanic,
+action:"saveJobCard",
 
-            serviceType:data.serviceType,
+jobCardNo:data.jobCardNo,
 
-            actionBy:data.actionBy
+regNo:data.regNo,
 
-        });
+model:data.model,
 
-        const res = await fetch(
+serviceType:data.serviceType,
 
-            this.url + "?" + params.toString()
+supervisor:data.supervisor,
 
-        );
+mechanic:data.mechanic,
 
-        return await res.json();
+estimatedDelivery:data.estimatedDelivery,
 
-    }
+remarks:data.remarks
+
+});
+
+const res=await fetch(
+
+this.url+"?"+params.toString()
+
+);
+
+return await res.json();
+
+},
+
+async updateStatus(data){
+
+const params=new URLSearchParams({
+
+action:"updateStatus",
+
+jobCardID:data.jobCardID,
+
+status:data.status,
+
+supervisor:data.supervisor,
+
+mechanic:data.mechanic,
+
+serviceType:data.serviceType,
+
+actionBy:data.actionBy
+
+});
+
+const res=await fetch(
+
+this.url+"?"+params.toString()
+
+);
+
+return await res.json();
+
+}
 
 };

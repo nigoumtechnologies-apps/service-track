@@ -1,162 +1,128 @@
 /*==================================================
- MotoFlow V2.1
- File : frontend/components/JobCard.js
+ MotoFlow V2.7
+ File : components/jobCard.js
 ==================================================*/
 
-const JobCard = {
+const JobCard={
 
-    create(job){
+create(job){
 
-        const typeClass = {
+const typeClass={
 
-            "FSC":"fsc",
-            "Paid Service":"paid",
-            "General Repair":"repair"
+"FSC":"fsc",
 
-        }[job.serviceType] || "";
+"Paid Service":"paid",
 
-        return `
+"General Repair":"repair"
 
-<div class="jobCard ${typeClass}">
+}[job.serviceType]||"";
 
-    <div class="jobTop">
+return `
 
-        <div class="jobLeft">
+<div
+class="jobCard ${typeClass}"
+onclick="Router.open('jobDetails','${job.jobCardID}')">
 
-            <div class="jobRow">
+<div class="jobTop">
 
-                <div>
-                    <div class="label">JC No</div>
-                    <div class="value">${job.jobCardNo}</div>
-                </div>
+<div class="jobLeft">
 
-                <div>
-                    <div class="label">Regn No</div>
-                    <div class="value">${job.regNo}</div>
-                </div>
+<div class="jobRow">
 
-                <div>
-                    <div class="label">Model</div>
-                    <div class="value">${job.model}</div>
-                </div>
+<div>
 
-            </div>
+<div class="label">JC No</div>
 
-            <div class="jobRow">
+<div class="value">${job.jobCardNo}</div>
 
-                <div>
-                    <div class="label">Service</div>
-                    <div class="value">${job.serviceType}</div>
-                </div>
+</div>
 
-                <div>
-                    <div class="label">Supervisor</div>
-                    <div class="value">${job.supervisor || ""}</div>
-                </div>
+<div>
 
-                <div>
-                    <div class="label">Mechanic</div>
-                    <div class="value">${job.mechanic || ""}</div>
-                </div>
+<div class="label">Regn No</div>
 
-            </div>
+<div class="value">${job.regNo}</div>
 
-        </div>
+</div>
 
-        <div class="jobRight">
+<div>
 
-            <div class="statusList">
+<div class="label">Model</div>
 
-<button
-class="statusButton ${job.assigned?'done':''}"
-onclick="JobCard.updateStatus('${job.jobCardID}','ASSIGNED',this)">
-✔ Assigned
+<div class="value">${job.model}</div>
+
+</div>
+
+</div>
+
+<div class="jobRow">
+
+<div>
+
+<div class="label">Service</div>
+
+<div class="value">${job.serviceType}</div>
+
+</div>
+
+<div>
+
+<div class="label">Supervisor</div>
+
+<div class="value">${job.supervisor||"-"}</div>
+
+</div>
+
+<div>
+
+<div class="label">Mechanic</div>
+
+<div class="value">${job.mechanic||"-"}</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="jobRight">
+
+<div class="statusList">
+
+<button class="statusButton ${job.assigned?'done':''}">
+
+✓ Assigned
+
 </button>
 
-<button
-class="statusButton ${job.started?'done':''}"
-onclick="JobCard.updateStatus(
-'${job.jobCardID}',
-'STARTED',
-'${job.supervisor}',
-'${job.mechanic}',
-'${job.serviceType}',
-this
-)">
+<button class="statusButton ${job.started?'done':''}">
+
 ▶ Started
+
 </button>
 
-<button
-class="statusButton ${job.completed?'done':''}"
-onclick="JobCard.updateStatus('${job.jobCardID}','COMPLETED',this)">
+<button class="statusButton ${job.completed?'done':''}">
+
 ✓ Completed
+
 </button>
 
-<button
-class="statusButton ${job.delivered?'done':''}"
-onclick="JobCard.updateStatus('${job.jobCardID}','DELIVERED',this)">
+<button class="statusButton ${job.delivered?'done':''}">
+
 📦 Delivered
+
 </button>
 
-            </div>
+</div>
 
-        </div>
+</div>
 
-    </div>
+</div>
 
 </div>
 
 `;
 
-    },
-
-    async updateStatus(
-    jobCardID,
-    status,
-    supervisor,
-    mechanic,
-    serviceType,
-    button
-){
-
-        button.disabled=true;
-
-        button.innerHTML="Saving...";
-
-        try{
-
-            const result = await API.updateStatus({
-
-                jobCardID:jobCardID,
-
-                status:status,
-
-                supervisor:"supervisor",
-
-                mechanic:"mechanic",
-
-                serviceType:"serviceType",
-
-                actionBy:"Supervisor"
-
-            });
-
-            if(result.success){
-
-                await Today.render();
-
-            }else{
-
-                alert(result.message);
-
-            }
-
-        }catch(err){
-
-            alert(err.message);
-
-        }
-
-    }
+}
 
 };
