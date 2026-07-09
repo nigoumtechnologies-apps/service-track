@@ -453,3 +453,468 @@ FLOAT BUTTON
     box-shadow:var(--shadow);
 
 }
+/* ===========================================
+TODAY SCREEN UPGRADE
+===========================================*/
+
+.todayToolbar{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+    margin-bottom:10px;
+
+}
+
+.todayActions{
+
+    margin-top:0;
+
+}
+
+.todaySummary{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+.todayCounter{
+
+    display:flex;
+
+    align-items:baseline;
+
+    justify-content:space-between;
+
+    gap:12px;
+
+}
+
+.todayCounterLabel{
+
+    font-size:12px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+    color:var(--text-light);
+
+    font-weight:700;
+
+}
+
+.todayCounter strong{
+
+    font-size:18px;
+
+    color:var(--text);
+
+}
+
+.todayCounterMeta{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:8px;
+
+    color:var(--text-light);
+
+    font-size:12px;
+
+}
+
+.todayCounterMeta span{
+
+    background:var(--background);
+
+    border:1px solid var(--border);
+
+    border-radius:999px;
+
+    padding:4px 10px;
+
+}
+
+.todayCounterMetaTotal span{
+
+    background:var(--primary-light);
+
+    color:var(--primary-dark);
+
+    border-color:transparent;
+
+}
+
+.todaySearchCard{
+
+    padding:12px 14px;
+
+}
+
+.todaySearchInput{
+
+    width:100%;
+
+    padding:12px 14px;
+
+    font-size:15px;
+
+    border-radius:12px;
+
+    border:1px solid var(--border);
+
+    background:#fff;
+
+}
+
+.todayFilterBar{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:8px;
+
+}
+
+.filterButton{
+
+    flex:1 1 calc(50% - 8px);
+
+    min-width:120px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:12px;
+
+    padding:10px 12px;
+
+    border-radius:12px;
+
+    border:1px solid var(--border);
+
+    background:#fff;
+
+    color:var(--text);
+
+    box-shadow:var(--shadow);
+
+}
+
+.filterButton span{
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+.filterButton strong{
+
+    min-width:28px;
+
+    padding:4px 8px;
+
+    border-radius:999px;
+
+    background:var(--background);
+
+    color:var(--text-light);
+
+    font-size:12px;
+
+}
+
+.filterButton.active{
+
+    border-color:var(--primary);
+
+    background:var(--primary-light);
+
+    color:var(--primary-dark);
+
+}
+
+.filterButton.active strong{
+
+    background:#fff;
+
+    color:var(--primary-dark);
+
+}
+
+.todayList{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+.jobCard{
+
+    position:relative;
+
+    border-radius:16px;
+
+    background:linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+
+    border:1px solid rgba(0,0,0,.04);
+
+    overflow:hidden;
+
+}
+
+.jobCard[onclick]{
+
+    cursor:pointer;
+
+}
+
+.jobCard:hover{
+
+    transform:translateY(-1px);
+
+    box-shadow:0 10px 24px rgba(0,0,0,.08);
+
+}
+
+.jobCardHeader{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    justify-content:space-between;
+
+    gap:12px;
+
+    padding:14px 14px 10px;
+
+}
+
+.jobCardHeadLeft{
+
+    min-width:0;
+
+}
+
+.jobCardLabel{
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+    color:var(--text-light);
+
+    margin-bottom:4px;
+
+}
+
+.jobCardNumber{
+
+    font-size:18px;
+
+    font-weight:800;
+
+    color:var(--text);
+
+    word-break:break-word;
+
+}
+
+.jobBadge{
+
+    flex:0 0 auto;
+
+    padding:6px 10px;
+
+    border-radius:999px;
+
+    background:var(--primary-light);
+
+    color:var(--primary-dark);
+
+    font-size:12px;
+
+    font-weight:700;
+
+}
+
+.jobCardBody{
+
+    padding:0 14px 12px;
+
+}
+
+.jobMetaGrid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+
+    gap:10px 12px;
+
+}
+
+.jobMetaItem{
+
+    min-width:0;
+
+}
+
+.jobMetaItem .label{
+
+    margin-bottom:4px;
+
+}
+
+.jobMetaItem .value{
+
+    word-break:break-word;
+
+}
+
+.jobCardFooter{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+    padding:0 14px 14px;
+
+}
+
+.jobStatusSummary{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:10px;
+
+    padding:10px 12px;
+
+    border-radius:12px;
+
+    background:var(--background);
+
+}
+
+.jobStatusLabel{
+
+    font-size:12px;
+
+    color:var(--text-light);
+
+    text-transform:uppercase;
+
+    letter-spacing:.06em;
+
+    font-weight:700;
+
+}
+
+.jobStatusSummary strong{
+
+    font-size:14px;
+
+    color:var(--primary-dark);
+
+}
+
+.jobStatusPills{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:8px;
+
+}
+
+.statusPill{
+
+    padding:6px 10px;
+
+    border-radius:999px;
+
+    border:1px solid var(--border);
+
+    background:#fff;
+
+    color:var(--text-light);
+
+    font-size:11px;
+
+    font-weight:700;
+
+    text-transform:uppercase;
+
+    letter-spacing:.04em;
+
+}
+
+.statusPill.done{
+
+    background:#198754;
+
+    border-color:#198754;
+
+    color:#fff;
+
+}
+
+.todayEmptyState{
+
+    text-align:center;
+
+    color:var(--text-light);
+
+}
+
+@media (max-width: 640px){
+
+    .filterButton{
+
+        flex:1 1 calc(50% - 8px);
+
+    }
+
+    .jobMetaGrid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .jobStatusSummary{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+}
