@@ -75,7 +75,14 @@ onclick="JobCard.updateStatus('${job.jobCardID}','ASSIGNED',this)">
 
 <button
 class="statusButton ${job.started?'done':''}"
-onclick="JobCard.updateStatus('${job.jobCardID}','STARTED',this)">
+onclick="JobCard.updateStatus(
+'${job.jobCardID}',
+'STARTED',
+'${job.supervisor}',
+'${job.mechanic}',
+'${job.serviceType}',
+this
+)">
 ▶ Started
 </button>
 
@@ -103,7 +110,14 @@ onclick="JobCard.updateStatus('${job.jobCardID}','DELIVERED',this)">
 
     },
 
-    async updateStatus(jobCardID,status,button){
+    async updateStatus(
+    jobCardID,
+    status,
+    supervisor,
+    mechanic,
+    serviceType,
+    button
+){
 
         button.disabled=true;
 
@@ -117,11 +131,11 @@ onclick="JobCard.updateStatus('${job.jobCardID}','DELIVERED',this)">
 
                 status:status,
 
-                supervisor:"Kumar",
+                supervisor:"supervisor",
 
-                mechanic:"Pradeep",
+                mechanic:"mechanic",
 
-                serviceType:"FSC",
+                serviceType:"serviceType",
 
                 actionBy:"Supervisor"
 

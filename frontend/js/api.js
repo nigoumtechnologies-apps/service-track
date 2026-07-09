@@ -19,23 +19,29 @@ const API = {
 
     async updateStatus(data){
 
-        const res = await fetch(this.url,{
+        const params = new URLSearchParams({
 
-            method:"POST",
+            action:"updateStatus",
 
-            headers:{
-                "Content-Type":"application/json"
-            },
+            jobCardID:data.jobCardID,
 
-            body:JSON.stringify({
+            status:data.status,
 
-                action:"updateStatus",
+            supervisor:data.supervisor,
 
-                ...data
+            mechanic:data.mechanic,
 
-            })
+            serviceType:data.serviceType,
+
+            actionBy:data.actionBy
 
         });
+
+        const res = await fetch(
+
+            this.url + "?" + params.toString()
+
+        );
 
         return await res.json();
 
