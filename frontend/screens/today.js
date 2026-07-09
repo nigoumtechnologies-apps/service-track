@@ -51,8 +51,9 @@ const Today = {
     renderScreen() {
 
         const totalCount = this.jobs.length;
+        const searchJobs = this.getSearchJobs();
         const filteredCount = this.getVisibleJobs().length;
-        const counts = this.getStatusCounts();
+        const counts = this.getStatusCounts(searchJobs);
 
         document.getElementById("screen").innerHTML = `
             <div class="workshopScreen">
@@ -88,6 +89,7 @@ const Today = {
                     </div>
 
                     <div class="reportCard todaySearchCard">
+                        <div class="todaySearchWrap">
                         <input
                             id="jobSearch"
                             type="text"
@@ -95,6 +97,10 @@ const Today = {
                             value="${this.escape(this.searchText)}"
                             oninput="Today.search(this.value)"
                             class="todaySearchInput">
+                            <button type="button" class="searchClearButton" onclick="Today.clearSearch()">
+                                Clear
+                            </button>
+                        </div>
                     </div>
 
                     <div class="todayFilterBar" id="todayFilterBar">
@@ -120,18 +126,34 @@ const Today = {
 
         const jobList = document.getElementById("jobList");
         const filteredCount = document.getElementById("todayFilteredCount");
+        const counterMeta = document.getElementById("todayCounterMeta");
         const filterBar = document.getElementById("todayFilterBar");
 
-        if (!jobList || !filteredCount || !filterBar) {
+        if (!jobList || !filteredCount || !counterMeta || !filterBar) {
             return;
         }
 
+        const searchJobs = this.getSearchJobs();
         const visibleJobs = this.getVisibleJobs();
+        const counts = this.getStatusCounts(searchJobs);
 
         filteredCount.textContent = visibleJobs.length;
+        counterMeta.innerHTML = `
+            <span>${counts.new} new</span>
+            <span>${counts.assigned} assigned</span>
+            <span>${counts.started} started</span>
+            <span>${counts.completed} completed</span>
+            <span>${counts.delivered} delivered</span>
+        `;
 
         filterBar.querySelectorAll(".filterChip").forEach(button => {
             button.classList.toggle("active", button.dataset.filter === this.statusFilter);
+            if (counts.hasOwnProperty(button.dataset.filter)) {
+                const countNode = button.querySelector("strong");
+                if (countNode) {
+                    countNode.textContent = counts[button.dataset.filter];
+                }
+            }
         });
 
         if (visibleJobs.length === 0) {
@@ -149,7 +171,7 @@ const Today = {
 
     renderFilterButtons() {
 
-        const counts = this.getStatusCounts();
+        const counts = this.getStatusCounts(this.getSearchJobs());
         const totalCount = this.jobs.length;
         const filters = [
             { key: "all", label: "ALL", count: totalCount },
@@ -173,36 +195,43 @@ const Today = {
 
     },
 
-    getVisibleJobs() {
+    getSearchJobs() {
 
         const searchValue = this.searchText.trim().toUpperCase();
 
+        if (searchValue === "") {
+            return this.jobs.slice();
+        }
+
         return this.jobs.filter(job => {
-            const status = this.getStatus(job);
             const regNo = (job.regNo || "").toUpperCase();
             const jobCardNo = (job.jobCardNo || "").toUpperCase();
             const model = (job.model || "").toUpperCase();
             const supervisor = (job.supervisor || "").toUpperCase();
             const mechanic = (job.mechanic || "").toUpperCase();
 
-            const matchesSearch =
-                searchValue === "" ||
+            return (
                 regNo.includes(searchValue) ||
                 jobCardNo.includes(searchValue) ||
                 model.includes(searchValue) ||
                 supervisor.includes(searchValue) ||
-                mechanic.includes(searchValue);
-
-            const matchesStatus =
-                this.statusFilter === "all" ||
-                status === this.statusFilter;
-
-            return matchesSearch && matchesStatus;
+                mechanic.includes(searchValue)
+            );
         });
 
     },
 
-    getStatusCounts() {
+    getVisibleJobs() {
+
+        return this.getSearchJobs().filter(job => {
+            const status = this.getStatus(job);
+
+            return this.statusFilter === "all" || status === this.statusFilter;
+        });
+
+    },
+
+    getStatusCounts(jobs) {
 
         const counts = {
             new: 0,
@@ -212,7 +241,7 @@ const Today = {
             delivered: 0
         };
 
-        this.jobs.forEach(job => {
+        (jobs || this.jobs).forEach(job => {
             const status = this.getStatus(job);
 
             if (counts.hasOwnProperty(status)) {
@@ -283,6 +312,17 @@ const Today = {
     bulkUpload() {
 
         alert("STEP-046 : Bulk Upload Screen");
+
+    },
+
+    clearSearch() {
+
+        this.searchText = "";
+        const input = document.getElementById("jobSearch");
+        if (input) {
+            input.value = "";
+        }
+        this.updateView();
 
     },
 

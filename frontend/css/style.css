@@ -1528,3 +1528,203 @@ STEP-050 WORKSHOP SCREEN
     }
 
 }
+
+/* ===========================================
+STEP-051 WORKSHOP TUNING
+===========================================*/
+
+.todaySearchWrap{
+
+    display:flex;
+
+    gap:8px;
+
+    align-items:center;
+
+}
+
+.todaySearchWrap .todaySearchInput{
+
+    flex:1;
+
+}
+
+.searchClearButton{
+
+    flex:0 0 auto;
+
+    padding:12px 14px;
+
+    border-radius:12px;
+
+    background:var(--background);
+
+    color:var(--text);
+
+    border:1px solid var(--border);
+
+    font-weight:700;
+
+}
+
+.filterChip{
+
+    min-width:unset;
+
+}
+
+.jobCard{
+
+    border:1px solid rgba(0,0,0,.05);
+
+}
+
+.jobCardHeader{
+
+    padding:16px 16px 10px;
+
+}
+
+.jobCardBody{
+
+    padding:0 16px 12px;
+
+}
+
+.jobMetaGrid{
+
+    gap:10px 14px;
+
+}
+
+.jobMetaItem .label{
+
+    color:var(--text-light);
+
+    font-size:11px;
+
+    margin-bottom:4px;
+
+}
+
+.jobMetaItem .value{
+
+    font-size:14px;
+
+    font-weight:700;
+
+}
+
+.jobStatusSummary{
+
+    align-items:flex-start;
+
+}
+
+.jobStatusTag{
+
+    color:#fff;
+
+    border-color:transparent;
+
+}
+
+.jobStatusTag.new{
+
+    background:#6C757D;
+
+}
+
+.jobStatusTag.assigned{
+
+    background:#0D6EFD;
+
+}
+
+.jobStatusTag.started{
+
+    background:#198754;
+
+}
+
+.jobStatusTag.completed{
+
+    background:#6F42C1;
+
+}
+
+.jobStatusTag.delivered{
+
+    background:#111111;
+
+}
+
+.jobOverdue{
+
+    display:flex;
+
+    align-items:baseline;
+
+    justify-content:space-between;
+
+    gap:10px;
+
+    margin-top:10px;
+
+    padding:10px 12px;
+
+    border-radius:12px;
+
+    background:#FFF3CD;
+
+    border:1px solid #FFE69C;
+
+}
+
+.jobOverdueLabel{
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.06em;
+
+    color:#8A6D00;
+
+    font-weight:700;
+
+}
+
+.jobOverdue strong{
+
+    color:#8A6D00;
+
+    font-size:13px;
+
+}
+
+@media (max-width: 640px){
+
+    .todaySearchWrap{
+
+        flex-direction:column;
+
+        align-items:stretch;
+
+    }
+
+    .searchClearButton{
+
+        width:100%;
+
+    }
+
+    .jobOverdue{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+}

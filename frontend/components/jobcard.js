@@ -13,8 +13,9 @@ const JobCard = {
             "General Repair": "repair"
         }[job.serviceType] || "";
 
-        const currentStatus = this.getCurrentStatus(job);
+        const statusInfo = this.getStatusInfo(job);
         const estimatedDelivery = this.formatEstimatedDelivery(job.estimatedDelivery);
+        const overdueInfo = this.getOverdueInfo(job);
 
         return `
             <div class="jobCard ${typeClass}" data-job-id="${this.escape(job.jobCardID)}" onclick="Router.open('jobDetails', this.dataset.jobId)">
@@ -53,15 +54,16 @@ const JobCard = {
                             <div class="value">${this.escape(estimatedDelivery || "-")}</div>
                         </div>
                     </div>
+                    ${overdueInfo.html}
                 </div>
 
                 <div class="jobCardFooter">
                     <div class="jobStatusSummary">
                         <div>
                             <span class="jobStatusLabel">Current Status</span>
-                            <strong>${this.escape(currentStatus)}</strong>
+                            <strong>${this.escape(statusInfo.label)}</strong>
                         </div>
-                        <div class="jobStatusTag ${currentStatus.toLowerCase()}">${this.escape(currentStatus)}</div>
+                        <div class="jobStatusTag ${statusInfo.key}">${this.escape(statusInfo.label)}</div>
                     </div>
 
                     <div class="jobStatusPills">
@@ -77,7 +79,7 @@ const JobCard = {
 
     },
 
-    getCurrentStatus(job) {
+    getStatusInfo(job) {
 
         const normalizedStatus = (job.status || "")
             .toString()
@@ -86,22 +88,71 @@ const JobCard = {
             .replace(/\s+/g, "");
 
         if (job.delivered || normalizedStatus === "delivered") {
-            return "Delivered";
+            return { key: "delivered", label: "Delivered" };
         }
 
         if (job.completed || normalizedStatus === "completed") {
-            return "Completed";
+            return { key: "completed", label: "Completed" };
         }
 
         if (job.started || normalizedStatus === "started") {
-            return "Started";
+            return { key: "started", label: "Started" };
         }
 
         if (job.assigned || normalizedStatus === "assigned") {
-            return "Assigned";
+            return { key: "assigned", label: "Assigned" };
         }
 
-        return normalizedStatus === "new" ? "New" : "New";
+        return { key: "new", label: "New" };
+
+    },
+
+    getCurrentStatus(job) {
+
+        return this.getStatusInfo(job).label;
+
+    },
+
+    getOverdueInfo(job) {
+
+        const estimatedDelivery = job.estimatedDelivery;
+
+        if (!estimatedDelivery) {
+            return { html: "", text: "" };
+        }
+
+        const deliveryDate = new Date(estimatedDelivery);
+
+        if (Number.isNaN(deliveryDate.getTime())) {
+            return { html: "", text: "" };
+        }
+
+        const statusInfo = this.getStatusInfo(job);
+
+        if (statusInfo.key === "delivered") {
+            return { html: "", text: "" };
+        }
+
+        const now = new Date();
+
+        if (deliveryDate >= now) {
+            return { html: "", text: "" };
+        }
+
+        const diffMinutes = Math.max(0, Math.floor((now.getTime() - deliveryDate.getTime()) / 60000));
+        const hours = Math.floor(diffMinutes / 60);
+        const minutes = diffMinutes % 60;
+        const duration = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+
+        return {
+            html: `
+                <div class="jobOverdue">
+                    <span class="jobOverdueLabel">Overdue</span>
+                    <strong>${this.escape(duration)}</strong>
+                </div>
+            `,
+            text: duration
+        };
 
     },
 
